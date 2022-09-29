@@ -7,15 +7,17 @@ on:
   pull_request:
     branches:
       - main
-    types: [opened, ready_for_review, synchronize]
+    types: [opened, ready_for_review, synchronize, labeled]
 
 jobs:
   tests:
-    name: Tests
+    name: Test
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.draft == false
+    if: github.event.pull_request.draft != true || contains(github.event.pull_request.labels.*.name, 'run')
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Run tests
-        run: echo "Hello, World"
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
