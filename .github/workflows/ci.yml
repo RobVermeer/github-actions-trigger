@@ -13,14 +13,11 @@ jobs:
   tests:
     name: Tests
     runs-on: ubuntu-20.04
-    if: github.event.pull_request.draft != true || github.event.label.name == 'run'
+    if: github.event.pull_request.draft != true || contains(github.event.pull_request.labels.*.name, 'run')
     steps:
-      - name: Remove labels
-        uses: andymckay/labeler@master
-        with:
-          remove-labels: 'run'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Run tests
-        run: echo github.event
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
